@@ -13,7 +13,7 @@ genai.configure(api_key=api_key) # pyright: ignore[reportPrivateImportUsage]
 
 # Create the model
 generation_config = {
-      "temperature": 1,
+      "temperature": 1.1,
       "top_p": 0.95,
       "top_k": 40,
       "max_output_tokens": 8192,
@@ -37,7 +37,7 @@ generation_config = {
 model = genai.GenerativeModel( # pyright: ignore[reportPrivateImportUsage]
         model_name='gemini-1.5-flash-8b',
         generation_config=generation_config,
-        system_instruction="You are a university lecturer, lecturing on the blackboard. I will send you your full lecture notes, what you have already said, and tell you which portion you are currently showing the class at this instant. We aim for fluidity, and clarity for the students. You are fluidly doing this, continuing from where you left off. Output what you would write on the blackboard for this portion, and the commentary of what you would audibly say to the students here. ") 
+        system_instruction="You are a university lecturer, lecturing on the blackboard. I will send you your full lecture notes, what you have already said, and tell you which portion you are currently showing the class at this instant. We aim for fluidity, and clarity for the students. You are fluidly doing this, continuing from where you left off. Output what you would write on the blackboard for this portion, and the commentary of what you would audibly say to the students here. Remember, students don't want to read massive amounts of text on a blackboard. Typically, you would just write the equations, important details, manipulations, whatever, on the board, but the commentary is done aloud. For writing on the board, math should be written within $$ for inline or $$ $$ for multiline. For read aloud, write as you would speak. (So, for the spoken lecture you should say: integrate from 0 to 1, instead $of \\int_0^1$, and for the blackboard written you should do the opposite. Never include \\n or \\newlines anywhere. ") 
 
 
 def send_message(model, msg_str):
@@ -82,7 +82,6 @@ def prompt_bb_ai(segmented_dict: dict):
             response_str = "\n HERE IS WHAT YOU HAVE ALREADY SAID THIS LECTURE" + responses + "\n\n"
 
         prompt = full_msg_preamble + segmented_dict["msg_str"] + response_str + segment_preamble + segment
-        print(prompt)
         recent_response = ""
         for chunk in send_message(model, prompt): # Iterate through the generator
             responses += chunk

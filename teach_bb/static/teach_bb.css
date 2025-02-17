@@ -56,6 +56,10 @@ body {
     gap: 10px;
 }
 
+.hidden {
+	display: none;
+}
+
 textarea {
     padding: 10px;
     font-size: 1rem;
@@ -77,4 +81,5 @@ button {
 button:hover {
     background-color: #0056b3;
 }
+
 

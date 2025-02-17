@@ -3,42 +3,52 @@ document.addEventListener('DOMContentLoaded', function() {
     const equationDiv = document.getElementById('equation');
 	const closed_captions = document.getElementById('closed-captions');
     const textBox = document.getElementById('label');
+	const next_sse_button = document.getElementById('next_sse');
+	
+	content_slides = [];
+	which_slide_on = -1;
+	generation_terminated = false;
 
-	/*updateButton.addEventListener('click', function() {
-        // Use fetch to send a request to your Python server.
-        const text = textBox.value;
-        fetch('/update_blackboard', {  // Replace with your server endpoint.
-            method: 'POST',  // Or 'GET' if appropriate (see server code).
-            headers: {
-                'Content-Type': 'application/json' // Important for sending JSON data
-            },
-            body: JSON.stringify({text: text}) // Send data as JSON
-        })
-        .then(response => response.json()) // Parse the JSON response
-        .then(data => {
-            // Update the blackboard content with the data from the server.
-            equationDiv.textContent = data.equation; // Or use innerHTML if the data is HTML
-            //If you want to render using katex, it is better to use the render function
-            //katex.render(data.equation, equationDiv, {
-            //    throwOnError: false
-            //});
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            equationDiv.textContent = "Error fetching data."; // Handle errors gracefully
-        });
-    });
-	*/
 
 	updateButton.addEventListener('click', function ()
 	{
+		updateButton.classList.add("hidden");
+		next_sse_button.classList.remove("hidden");
 		const eventSource = new EventSource("/stream");
 		eventSource.onmessage = function(event)
 		{
 			const ai_message = JSON.parse(event.data);
-			equationDiv.textContent = ai_message["Blackboard Written"]
-			closed_captions.textContent = ai_message["Spoken Lecture"]
+			let this_slide = [];
+			this_slide.push(ai_message["Blackboard Written"]);
+			this_slide.push(ai_message["Spoken Lecture"]);
 
+			console.log(ai_message["Blackboard Written"])
+
+			content_slides.push(this_slide);
+		}
+
+
+		eventSource.onerror = function(error) 
+		{
+                console.error("Error", error);
+                eventSource.close(); // Close connection on error
+				generation_terminated = true;
+		};
+	}); // updateButton eventlistener
+
+	next_sse_button.addEventListener('click', function ()
+	{
+		next_slide();
+	}); // next_sse_button eventlistener
+
+
+	function next_slide()
+	{
+		if(which_slide_on + 1 < content_slides.length)
+		{
+			which_slide_on += 1;
+			equationDiv.textContent = content_slides[which_slide_on][0];
+			closed_captions.textContent = content_slides[which_slide_on][1];
 			renderMathInElement(equationDiv, {
 				delimiters: [
 					{ left: '$$', right: '$$', display: true },
@@ -47,16 +57,28 @@ document.addEventListener('DOMContentLoaded', function() {
 					{ left: '\\[', right: '\\]', display: true }
 				],
 				throwOnError: false
-			});
-			
+			}); // katex delimiters
+			renderMathInElement(closed_captions, {
+				delimiters: [
+					{ left: '$$', right: '$$', display: true },
+					{ left: '$', right: '$', display: false },
+					{ left: '\\(', right: '\\)', display: false },
+					{ left: '\\[', right: '\\]', display: true }
+				],
+				throwOnError: false
+			}); // katex delimiters
 		}
-		eventSource.onerror = function(error) 
+		else if(!generation_terminated)
 		{
-                console.error("Error", error);
-                eventSource.close(); // Close connection on error
-			};
+			alert("Wait! We aren't ready yet!");
+		}
+		else
+		{
+		next_sse_button.classList.add('hidden');
+		}		
 
-	});
 
+		
 
+	} // next_slide
 });

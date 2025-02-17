@@ -49,13 +49,6 @@ CORS(app)
 def index():
     return render_template('teach_bb.html')  # Assuming teach_bb.html is in a folder named 'templates'
 
-@app.route('/update_blackboard', methods=['POST'])
-def update_blackboard():
-    data = request.get_json()
-    text_to_process = data.get('text', '')
-    processed_text = process_text(text_to_process)
-    #return jsonify({'equation': processed_text})
-
 def process_text(text):
     for response in ai_handling.test_call(cauchy):
         print("Responded. ")
@@ -67,7 +60,6 @@ def process_text(text):
 
 @app.route('/stream')
 def stream():
-    print("e")
     return Response(process_text(""), mimetype="text/event-stream")
 
 if __name__ == '__main__':
