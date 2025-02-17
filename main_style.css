@@ -1,0 +1,111 @@
+body {
+    font-family: 'Nunito Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f0e3;
+    color: #555;
+    line-height: 1.6;
+}
+
+.container {
+    width: 80%;
+    margin: 30px auto;
+    background-color: #fffaf0;
+    padding: 
+30px; /* Increased padding for a more spacious feel */
+    border-radius: 15px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column; /* Changed to column for the .container */
+}
+
+h1 {
+    text-align: center;
+    color: #444;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+#chat-area {
+	min-height:60vh;
+    overflow-y: scroll;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    background-color: #fdfdfd;
+}
+
+#chat-history {
+    display: flex;
+    flex-direction: column;
+    padding: 5px 0;
+}
+
+#chat-history div {
+    margin-bottom: 8px;
+    padding: 12px 15px;
+    border-radius: 20px;
+    word-wrap: break-word;
+}
+
+.user-message {
+    background-color: #e0f7fa;
+    align-self: flex-end;
+    max-width: 75%;
+    color: #333;
+}
+
+.ai-message {
+    background-color: #fbe9e7;
+    align-self: flex-start;
+    max-width: 95%;
+    color: #333;
+}
+
+#input-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#message-input {
+    flex-grow: 1;
+    padding: 12px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 25px;
+    font-size: 16px;
+    color: #555;
+}
+
+#message-input:focus {
+    outline: none;
+    border-color: #b2ebf2;
+    box-shadow: 0 0 5px rgba(178, 235, 242, 0.5);
+}
+
+#send-button {
+    padding: 12px 20px;
+    background-color: #a7c957;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+#send-button:hover {
+    background-color: #6a994e;
+}
+
+#send-button:active {
+    background-color: #588157;
+}
+
+#typing-indicator {
+    font-style: italic;
+    color: #777;
+    margin-top: 8px;
+    font-size: 0.9em;
+}

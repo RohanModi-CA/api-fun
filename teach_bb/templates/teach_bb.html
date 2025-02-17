@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teach Blackboard</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='teach_bb.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+	<script defer src="{{ url_for('static', filename='teach_bb.js') }}"></script>
+</head>
+<body>
+    <div class="classroom">
+        <div class="blackboard" id="blackboard">
+            <div class="equation" id="equation"></div>
+        </div>
+        <div class="controls">
+            <textarea id="label" placeholder="Click here to ask the server for text"></textarea>
+            <button id="server_req">Ask the server to update the blackboard</button>
+        </div>
+    </div>
+</body>
+</html>
