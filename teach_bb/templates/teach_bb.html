@@ -8,12 +8,25 @@
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
 	<script defer src="{{ url_for('static', filename='teach_bb.js') }}"></script>
+	<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+	onload="renderMathInElement(document.body, {
+		delimiters: [
+			{left: '$$', right: '$$', display: true},
+			{left: '$', right: '$', display: false},
+			{left: '\\(', right: '\\)', display: false},
+			{left: '\\[', right: '\\]', display: true}
+		],
+		throwOnError : false
+	});"></script>
 </head>
 <body>
     <div class="classroom">
         <div class="blackboard" id="blackboard">
             <div class="equation" id="equation"></div>
         </div>
+		<div class="closed-captions" id="closed-captions">
+
+		</div>
         <div class="controls">
             <textarea id="label" placeholder="Click here to ask the server for text"></textarea>
             <button id="server_req">Ask the server to update the blackboard</button>

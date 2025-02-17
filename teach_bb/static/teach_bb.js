@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const updateButton = document.getElementById('server_req');
     const equationDiv = document.getElementById('equation');
+	const closed_captions = document.getElementById('closed-captions');
     const textBox = document.getElementById('label');
 
 	/*updateButton.addEventListener('click', function() {
@@ -32,14 +33,21 @@ document.addEventListener('DOMContentLoaded', function() {
 	updateButton.addEventListener('click', function ()
 	{
 		const eventSource = new EventSource("/stream");
-		console.log("bonhour");
 		eventSource.onmessage = function(event)
 		{
-			console.log("respo");
-			console.log(event.data);
 			const ai_message = JSON.parse(event.data);
 			equationDiv.textContent = ai_message["Blackboard Written"]
-			console.log(ai_message)
+			closed_captions.textContent = ai_message["Spoken Lecture"]
+
+			renderMathInElement(equationDiv, {
+				delimiters: [
+					{ left: '$$', right: '$$', display: true },
+					{ left: '$', right: '$', display: false },
+					{ left: '\\(', right: '\\)', display: false },
+					{ left: '\\[', right: '\\]', display: true }
+				],
+				throwOnError: false
+			});
 			
 		}
 		eventSource.onerror = function(error) 
