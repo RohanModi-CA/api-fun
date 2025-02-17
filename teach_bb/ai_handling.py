@@ -82,6 +82,7 @@ def prompt_bb_ai(segmented_dict: dict):
             response_str = "\n HERE IS WHAT YOU HAVE ALREADY SAID THIS LECTURE" + responses + "\n\n"
 
         prompt = full_msg_preamble + segmented_dict["msg_str"] + response_str + segment_preamble + segment
+        print(prompt)
         recent_response = ""
         for chunk in send_message(model, prompt): # Iterate through the generator
             responses += chunk

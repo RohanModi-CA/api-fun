@@ -1,0 +1,13 @@
+# Gitignore file for a JavaScript and Python project
+
+# Node modules - npm dependencies
+node_modules/
+
+# Python bytecode - compiled python files
+__pycache__/
+.venv/
+teach_bb/.venv
+teach_bb/minefield/.venv
+
+.env
+
