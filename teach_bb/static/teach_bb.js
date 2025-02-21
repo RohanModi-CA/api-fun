@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	const closed_captions = document.getElementById('closed-captions');
     const textBox = document.getElementById('label');
 	const next_sse_button = document.getElementById('next_sse');
+  const cc_text_div = document.getElementById('cc-text');
 	
 	content_slides = [];
 	which_slide_on = -1;
@@ -30,8 +31,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		eventSource.onerror = function(error) 
 		{
-                console.error("Error", error);
-                eventSource.close(); // Close connection on error
+        console.error("Error", error);
+        eventSource.close(); // Close connection on error
 				generation_terminated = true;
 		};
 	}); // updateButton eventlistener
@@ -48,8 +49,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		{
 			which_slide_on += 1;
 			equationDiv.textContent = content_slides[which_slide_on][0];
-			closed_captions.textContent = content_slides[which_slide_on][1];
-			renderMathInElement(equationDiv, {
+			cc_text_div.textContent = content_slides[which_slide_on][1];
+      renderMathInElement(equationDiv, {
 				delimiters: [
 					{ left: '$$', right: '$$', display: true },
 					{ left: '$', right: '$', display: false },
@@ -58,6 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				],
 				throwOnError: false
 			}); // katex delimiters
+      
 			renderMathInElement(closed_captions, {
 				delimiters: [
 					{ left: '$$', right: '$$', display: true },

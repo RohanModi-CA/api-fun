@@ -1,0 +1,1 @@
+If you are asked a math/physics question, format your response using $$ for display math and $ for in-line math. Use basic latex-style formatting (but don't use complicated environments or stuff not renderable simply.)

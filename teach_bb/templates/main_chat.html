@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clean Chat</title>
+	<script src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+    <link rel="stylesheet" href="/static/main_chat.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+	<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+	onload="renderMathInElement(document.body, {
+		delimiters: [
+			{left: '$$', right: '$$', display: true},
+			{left: '$', right: '$', display: false},
+			{left: '\\(', right: '\\)', display: false},
+			{left: '\\[', right: '\\]', display: true}
+		],
+		throwOnError : false
+	});"></script>
+
+</head>
+<body>
+    <div class="chat-container" id="chat-container">
+        <div class="chat-header">
+            <h1>API-Fun Chat</h1>
+        </div>
+        <div class="messages" id="messageContainer"></div>
+        <div class="input-container">
+            <input type="text" id="messageInput" placeholder="Type your message...">
+            <button id="sendButton">Send</button>
+        </div>
+    </div>
+
+
+
+    <div class="blackboard_container hidden" id="blackboard_container">
+      <div class="classroom">
+        <div class="blackboard" id="blackboard">
+                <div class="equation" id="equation">
+                </div>
+        </div>
+        <div class="closed-captions" id="closed-captions">
+
+          <div id="cc-text">
+
+          </div>
+          <div class="controls">
+              <button id="server_req">Ask the server to update the blackboard</button>
+              <button class="hidden" id="next_sse">Go to the next SSE entry</button>
+          </div>
+        </div>
+    </div>
+
+
+    <script src="/static/main_chat.js"></script>
+    <script src="/static/teach_bb.js"></script>
+</body>
+</html>

@@ -33,20 +33,30 @@ generation_config = {
       "response_mime_type": "application/json",
 }
 
+# Load the system instructions
+with open("resources/bb_ai_prompt.txt", "r") as bb_ai_prompt:
+    system_instruction = bb_ai_prompt.read()
+
 # Choose a model
 model = genai.GenerativeModel( # pyright: ignore[reportPrivateImportUsage]
-        model_name='gemini-1.5-flash-8b',
+        model_name='gemini-2.0-flash-lite-preview-02-05',
         generation_config=generation_config,
-        system_instruction="You are a university lecturer, lecturing on the blackboard. I will send you your full lecture notes, what you have already said, and tell you which portion you are currently showing the class at this instant. We aim for fluidity, and clarity for the students. You are fluidly doing this, continuing from where you left off. Output what you would write on the blackboard for this portion, and the commentary of what you would audibly say to the students here. Remember, students don't want to read massive amounts of text on a blackboard. Typically, you would just write the equations, important details, manipulations, whatever, on the board, but the commentary is done aloud. For writing on the board, math should be written within $$ for inline or $$ $$ for multiline. For read aloud, write as you would speak. (So, for the spoken lecture you should say: integrate from 0 to 1, instead $of \\int_0^1$, and for the blackboard written you should do the opposite. Never include \\n or \\newlines anywhere. ") 
+        system_instruction=system_instruction) 
 
+
+def filter_response(inp_str):
+    inp_str.replace(r"\newline", "")
+    inp_str.replace("\n", "")
+    return inp_str
 
 def send_message(model, msg_str):
-    response = ""
+    response, this_chunk = "", ""
     for chunk in model.generate_content(msg_str, stream=True):
-        response += chunk.text
-        # print(chunk.text, end="", flush=True)  # Print each chunk immediately
+        this_chunk = filter_response(chunk.text)
+        response += this_chunk
+        #print(chunk.text, end="", flush=True)  # Print each chunk immediately
         # We use yield to make this a "Generator" Function
-        yield chunk.text
+        yield this_chunk
 
 def segment_input(msg_str: str):
     """
@@ -54,21 +64,53 @@ def segment_input(msg_str: str):
     for the teacher to handle, returning a dictionary, {full_msg:msg_str, segments=[str1,str2,etc]}.
     """
     
-    output = {"msg_str": msg_str, "segments": []}
+    """
+    We break every NL_LIMIT newlines, assuming that sufficient characters were in that line. 
+    Additionally, we would not have more than DM_LIMIT \[ \] entity within a segment.
+    """
 
-    # Initially, we will just chunk at 4 lines each.
-    counter = 0
-    split_string = msg_str.split("\n")
-    for index, _ in enumerate(split_string):
-        if ( (index % 4 == 0)  and  (index + 3) < len(split_string)):
-            segment = split_string[index] + split_string[index+1] + split_string[index+2] + split_string[index+3]
-            output["segments"].append(segment)
-        if ( (index % 4 == 0)  and  (index + 3) >= len(split_string)):
-            segment = ""
-            num_to_add = len(split_string) - index
-            for i in range(0,num_to_add):
-                segment += split_string[index + i]
-                output["segments"].append(segment)
+    NL_LIMIT = 3
+    DM_LIMIT = 1
+    current_DM = 0
+    current_NL = 0
+    char_limit = 300
+    over_char_count = False
+    end_on_overchar = ['\n', '. ']
+
+    previous_segment_end_index = 0 # This index was *not* included in the last one.
+
+    output = {"msg_str": msg_str, "segments": []}
+    
+    # We are going to walk through our string
+    for index, char in enumerate(msg_str):
+        # Check to see if we are at a closing \]
+        if(msg_str[index-1:index+1] == r'\['):
+            current_DM+=1
+        elif(msg_str[index-1:index+1] == r'$$'):
+            current_DM += 0.5 # We need two of these.
+        # Check if we're at a newline
+        if(msg_str[index]=='\n'):
+            current_NL+=1 
+
+        # Check if we are over the total limit
+        if(index - previous_segment_end_index >= char_limit):
+            over_char_count = True
+
+        # Check if we're done.
+        if ((current_DM >= DM_LIMIT or current_NL >= NL_LIMIT)
+            or (over_char_count and msg_str[index] in end_on_overchar)):
+            # Reset the counters
+            current_DM, current_NL = 0,0 
+            over_char_count = False
+
+            # Add the segment. 
+            output["segments"].append(msg_str[previous_segment_end_index: index + 1])
+            previous_segment_end_index = index + 1 # That is where the next segment starts. 
+    # Don't forget the final segment
+    output["segments"].append(msg_str[previous_segment_end_index: ])
+
+
+
     return output
     
 
@@ -90,8 +132,10 @@ def prompt_bb_ai(segmented_dict: dict):
 
 
 def test_call(inp):
+    print("test call")
     dict_out = segment_input(inp)
     for chunk in prompt_bb_ai(dict_out):
+        print("chunk, ", chunk)
         yield chunk
 
 
